@@ -57,7 +57,7 @@ model Message {
   realtor_id            Int
   realtor               User @relation("realtor_messages", fields: [realtor_id], references: [id])
   buyer_id              Int
-  buyer                 User @relation("buyer_messages", fields: [buyer_id], references: [id])
+  buyer                 User @relation("buyer_messages", fields: [buyer_id], references: [id ])
 }
 
 enum PropertyType {

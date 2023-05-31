@@ -5,4 +5,5 @@ export enum ErrorRes {
 
 export enum SuccessRes {
   USER_CREATED = 'User created successfully',
+  LOGIN_SUCCESS = 'User successfully login',
 }

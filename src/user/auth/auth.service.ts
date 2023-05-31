@@ -1,9 +1,11 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from 'src/prisma/prisma.service';
+import jwt from 'jsonwebtoken';
 import { UserType } from '@prisma/client';
-import { SignupParams, SignupResponse, SigninParams } from './auth.interface';
 
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SignupParams, SignupResponse, SigninParams } from './auth.interface';
+import { ErrorRes, SuccessRes } from '../../utils/constants';
 @Injectable()
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -19,7 +21,7 @@ export class AuthService {
       },
     });
     if (userExist) {
-      throw new ConflictException('User all ready exist');
+      throw new ConflictException(ErrorRes.USER_EXIST);
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const user = await this.prismaService.user.create({
@@ -34,7 +36,7 @@ export class AuthService {
 
     const response: SignupResponse = {
       success: true,
-      message: 'user successfully created',
+      message: SuccessRes.USER_CREATED,
       user: {
         id: user.id,
       },
@@ -43,5 +45,16 @@ export class AuthService {
     return response;
   }
 
-  async signin({ email, password }: SigninParams) {}
+  async signin({ email, password }: SigninParams) {
+    let user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new ConflictException(ErrorRes.INVALID_CREDENTIALS);
+    }
+    user = { ...user };
+    delete user.password;
+  }
 }

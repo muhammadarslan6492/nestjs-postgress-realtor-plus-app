@@ -18,12 +18,10 @@ export class AuthService {
     private readonly utils: Utils,
   ) {}
 
-  async signup({
-    email,
-    password,
-    name,
-    phone,
-  }: SignupParams): Promise<SignupResponse> {
+  async signup(
+    { email, password, name, phone }: SignupParams,
+    userType: UserType,
+  ): Promise<SignupResponse> {
     const userExist = await this.prismaService.user.findUnique({
       where: {
         email,
@@ -39,7 +37,7 @@ export class AuthService {
         name,
         phone,
         password: hashPassword,
-        user_type: UserType.BUYER,
+        user_type: userType,
       },
     });
 
@@ -79,5 +77,10 @@ export class AuthService {
       token,
     };
     return response;
+  }
+
+  async generateProductKey(email: string, usertype: UserType) {
+    const string = `${email}-${usertype}-${process.env.PRODUCT_KEY}`;
+    return this.utils.generateHash(string);
   }
 }

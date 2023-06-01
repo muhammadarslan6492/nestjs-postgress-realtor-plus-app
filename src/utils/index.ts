@@ -23,4 +23,8 @@ export class Utils {
     const decoded = jwt.verify(token, this.secretKey);
     return decoded;
   }
+
+  generateHash(data: any): string {
+    return bcrypt.hash(data, 10);
+  }
 }

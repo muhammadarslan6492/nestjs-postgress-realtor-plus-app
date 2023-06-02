@@ -10,7 +10,8 @@ export class HomeService {
   ) {}
 
   async homse() {
-    return [];
+    const homes = await this.prismaService.home.findMany();
+    return homes;
   }
 
   async oneHome() {

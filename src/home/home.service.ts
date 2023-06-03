@@ -2,7 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Utils } from 'src/utils';
 import { HomeResponseDto } from './dto/home.dto';
-import { GetHomesParams } from './home.interface';
+import { GetHomesParams, CreateHomeParams } from './home.interface';
+
+const homeSelect = {
+  id: true,
+  address: true,
+  city: true,
+  price: true,
+  propertyType: true,
+  number_of_bedrooms: true,
+  number_of_bathrooms: true,
+};
 
 @Injectable()
 export class HomeService {
@@ -44,7 +54,22 @@ export class HomeService {
   async getHome(id: number) {
     const home = await this.prismaService.home.findUnique({
       where: {
-        id: id,
+        id,
+      },
+      select: {
+        ...homeSelect,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+        realtor: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
 
@@ -54,8 +79,33 @@ export class HomeService {
     return new HomeResponseDto(home);
   }
 
-  async createHome() {
-    return {};
+  async createHome({
+    address,
+    city,
+    numberOfBathrooms,
+    numberOfBedrooms,
+    propertyType,
+    landSize,
+    price,
+    images,
+  }: CreateHomeParams) {
+    const home = await this.prismaService.home.create({
+      data: {
+        address,
+        number_of_bathrooms: numberOfBathrooms,
+        number_of_bedrooms: numberOfBedrooms,
+        city,
+        price,
+        propertyType,
+        land_size: landSize,
+        realtor_id: 1,
+      },
+    });
+    const homeImages = images.map((image) => {
+      return { ...image, home_id: home.id };
+    });
+    await this.prismaService.image.createMany({ data: homeImages });
+    return new HomeResponseDto(home);
   }
 
   async updateHome() {

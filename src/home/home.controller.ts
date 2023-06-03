@@ -13,7 +13,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { HomeResponseDto } from './dto/home.dto';
+import { HomeResponseDto, CreateHomeDto } from './dto/home.dto';
 
 import { HomeService } from './home.service';
 import { PropertyType } from '@prisma/client';
@@ -59,7 +59,7 @@ export class HomeController {
   }
 
   @Post()
-  createHome() {
+  createHome(@Body() body: CreateHomeDto) {
     return {};
   }
 

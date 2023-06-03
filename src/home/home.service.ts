@@ -41,8 +41,17 @@ export class HomeService {
     });
   }
 
-  async oneHome() {
-    return {};
+  async getHome(id: number) {
+    const home = await this.prismaService.home.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!home) {
+      throw new NotFoundException();
+    }
+    return new HomeResponseDto(home);
   }
 
   async createHome() {

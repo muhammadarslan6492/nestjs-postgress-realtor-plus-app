@@ -8,6 +8,7 @@ import {
   Body,
   InternalServerErrorException,
   Param,
+  ParseIntPipe,
   ParseEnumPipe,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -49,8 +50,12 @@ export class HomeController {
   }
 
   @Get(':id')
-  getHome() {
-    return {};
+  getHome(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return this.homseService.getHome(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   @Post()

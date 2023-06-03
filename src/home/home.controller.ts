@@ -11,7 +11,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 
-import { HomeResponseDto, CreateHomeDto } from './dto/home.dto';
+import { HomeResponseDto, CreateHomeDto, UpdateHomeDto } from './dto/home.dto';
 
 import { HomeService } from './home.service';
 import { PropertyType } from '@prisma/client';
@@ -66,12 +66,23 @@ export class HomeController {
   }
 
   @Put(':id')
-  updateHome() {
-    return {};
+  updateHome(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateHomeDto,
+  ) {
+    try {
+      return this.homseService.updateHome(id, body);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   @Delete(':id')
-  deleteHome() {
-    return {};
+  deleteHome(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return this.homseService.deleteHome(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

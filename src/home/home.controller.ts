@@ -9,8 +9,6 @@ import {
   InternalServerErrorException,
   Param,
   ParseIntPipe,
-  ParseEnumPipe,
-  UnauthorizedException,
 } from '@nestjs/common';
 
 import { HomeResponseDto, CreateHomeDto } from './dto/home.dto';
@@ -60,7 +58,11 @@ export class HomeController {
 
   @Post()
   createHome(@Body() body: CreateHomeDto) {
-    return {};
+    try {
+      return this.homseService.createHome(body);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   @Put(':id')

@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { HomeModule } from './home/home.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { UserInterceptor } from './user/interceptor/user.interceptor';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Module({
   imports: [UserModule, PrismaModule, HomeModule],
@@ -13,6 +14,10 @@ import { UserInterceptor } from './user/interceptor/user.interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: UserInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })
